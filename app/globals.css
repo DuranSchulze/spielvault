@@ -7,7 +7,7 @@
 @theme inline {
   /* Fonts */
   --font-display: var(--font-manrope);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter);
 
   /* Brand colors */
   --color-primary: #005db5;
@@ -38,7 +38,7 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-full: 9999px;
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-manrope);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -91,14 +91,14 @@ h6 {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --background: #f8f9fa;
+  --foreground: #2b3437;
+  --card: #ffffff;
+  --card-foreground: #2b3437;
+  --popover: #ffffff;
+  --popover-foreground: #2b3437;
+  --primary: #005db5;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -114,7 +114,7 @@ h6 {
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --radius: 0.375rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -169,4 +169,93 @@ h6 {
   html {
     @apply font-sans;
   }
+}
+
+/* ─── Tiptap editor prose styles ─────────────────────────────────────── */
+.ProseMirror {
+  line-height: 1.7;
+  color: #2b3437;
+  font-size: 0.9375rem;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.75em;
+}
+
+.ProseMirror h2 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2b3437;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror h3 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2b3437;
+  margin-top: 1em;
+  margin-bottom: 0.4em;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.4em;
+  margin-bottom: 0.75em;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.4em;
+  margin-bottom: 0.75em;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25em;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #005db5;
+  padding-left: 1em;
+  color: #49636f;
+  margin: 1em 0;
+  font-style: italic;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid #e8ecef;
+  margin: 1.25em 0;
+}
+
+.ProseMirror a.spiel-link,
+.ProseMirror a {
+  color: #005db5;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #abb3b7;
+  pointer-events: none;
+  height: 0;
+}
+
+/* ─── [Token] placeholder chip ───────────────────────────────────────── */
+.spiel-token {
+  display: inline-flex;
+  align-items: center;
+  background-color: #d6e3ff;
+  color: #005db5;
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 0.85em;
+  font-weight: 600;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.01em;
+  cursor: default;
 }
