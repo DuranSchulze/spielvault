@@ -38,10 +38,10 @@ export function LoginForm() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="font-display text-2xl font-bold text-[#2b3437] tracking-tight">
+        <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
           Welcome Back
         </h2>
-        <p className="mt-1 text-sm text-[#49636f]">
+        <p className="mt-1 text-sm text-muted-foreground">
           Sign in to your curated workspace.
         </p>
       </div>
@@ -49,13 +49,13 @@ export function LoginForm() {
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-1.5">
           <label
-            className="text-xs font-semibold text-[#49636f] uppercase tracking-widest"
+            className="text-xs font-semibold text-muted-foreground uppercase tracking-widest"
             htmlFor="email"
           >
             Email Address
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#abb3b7]">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               <svg
                 width="15"
                 height="15"
@@ -78,7 +78,7 @@ export function LoginForm() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="curator@email.com"
-              className="w-full pl-9 pr-3 py-2.5 border border-[#e8ecef] rounded-md text-[#2b3437] text-sm placeholder:text-[#abb3b7] outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10 transition-all bg-white"
+              className="w-full pl-9 pr-3 py-2.5 border border-border rounded-md text-foreground text-sm placeholder:text-muted-foreground/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-background"
             />
           </div>
         </div>
@@ -86,20 +86,20 @@ export function LoginForm() {
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <label
-              className="text-xs font-semibold text-[#49636f] uppercase tracking-widest"
+              className="text-xs font-semibold text-muted-foreground uppercase tracking-widest"
               htmlFor="password"
             >
               Password
             </label>
             <Link
               href="#"
-              className="text-xs text-[#005db5] hover:underline font-medium"
+              className="text-xs text-primary hover:underline font-medium"
             >
               Forgot Password?
             </Link>
           </div>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#abb3b7]">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               <svg
                 width="15"
                 height="15"
@@ -124,7 +124,7 @@ export function LoginForm() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
-              className="w-full pl-9 pr-3 py-2.5 border border-[#e8ecef] rounded-md text-[#2b3437] text-sm placeholder:text-[#abb3b7] outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10 transition-all bg-white"
+              className="w-full pl-9 pr-3 py-2.5 border border-border rounded-md text-foreground text-sm placeholder:text-muted-foreground/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-background"
             />
           </div>
         </div>
@@ -134,9 +134,9 @@ export function LoginForm() {
             type="checkbox"
             checked={rememberMe}
             onChange={(event) => setRememberMe(event.target.checked)}
-            className="w-4 h-4 rounded border-[#abb3b7] accent-[#005db5]"
+            className="w-4 h-4 rounded border-border accent-[#005db5] dark:accent-[#4da3ff]"
           />
-          <span className="text-sm text-[#49636f]">
+          <span className="text-sm text-muted-foreground">
             Keep me signed in for 30 days
           </span>
         </label>
@@ -150,17 +150,17 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-2.5 px-4 rounded-md text-white font-semibold text-sm bg-[#005db5] hover:bg-[#0052a0] transition-colors mt-2 disabled:opacity-40"
+          className="w-full py-2.5 px-4 rounded-md text-primary-foreground font-semibold text-sm bg-primary hover:bg-primary/90 transition-colors mt-2 disabled:opacity-40"
         >
           {isSubmitting ? "Signing In..." : "Sign in to Vault"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-[#49636f]">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         New to Spiel Vault?{" "}
         <Link
           href="/signup"
-          className="text-[#005db5] font-semibold hover:underline"
+          className="text-primary font-semibold hover:underline"
         >
           Contact your admin
         </Link>

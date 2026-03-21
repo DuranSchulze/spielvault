@@ -17,7 +17,7 @@ export default async function NewSpielPage() {
     prisma.category.findMany({
       where: { companyId },
       orderBy: { name: "asc" },
-      select: { id: true, name: true },
+      select: { id: true, name: true, description: true },
     }),
   ]);
 

@@ -9,7 +9,6 @@ import {
   PenLine,
   Users,
   Layers,
-  HelpCircle,
   Archive,
   UserCircle2,
 } from "lucide-react";
@@ -24,7 +23,6 @@ const mainNav = [
 
 const systemNav = [
   { label: "Profile", href: "/profile", icon: UserCircle2 },
-  { label: "Support", href: "/support", icon: HelpCircle },
   { label: "Archive", href: "/archive", icon: Archive },
 ];
 
@@ -48,19 +46,19 @@ function NavItem({
       className={cn(
         "relative flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors group",
         isActive
-          ? "text-[#005db5] bg-[#005db5]/8 font-semibold"
-          : "text-[#49636f] hover:text-[#2b3437] hover:bg-[#e3e9ec]",
+          ? "text-primary bg-primary/10 font-semibold"
+          : "text-muted-foreground hover:text-foreground hover:bg-accent",
       )}
     >
       {isActive && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#005db5] rounded-r-full" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
       )}
       <Icon
         className={cn(
           "w-4 h-4 shrink-0",
           isActive
-            ? "text-[#005db5]"
-            : "text-[#6f797c] group-hover:text-[#2b3437]",
+            ? "text-primary"
+            : "text-muted-foreground/70 group-hover:text-foreground",
         )}
       />
       <span>{label}</span>
@@ -80,8 +78,8 @@ export function SidebarNav() {
 
       {/* Divider */}
       <div>
-        <p className="px-3 mb-1.5 text-[10px] font-semibold text-[#abb3b7] uppercase tracking-widest">
-          Support &amp; System
+        <p className="px-3 mb-1.5 text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
+          Account &amp; System
         </p>
         <div className="flex flex-col gap-0.5">
           {systemNav.map((item) => (

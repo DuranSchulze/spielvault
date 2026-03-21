@@ -4,16 +4,26 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState, type MutableRefObject } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, Save, X } from "lucide-react";
+import { Check, Copy, Plus, Save, X } from "lucide-react";
 import type { SpielEditorValue } from "@/components/editor/spiel-editor";
-import { VariablePanel, type SpielVar } from "@/components/editor/variable-panel";
+import {
+  VariablePanel,
+  type SpielVar,
+} from "@/components/editor/variable-panel";
+import {
+  CategoryManagerModal,
+  type CategoryOption,
+} from "./category-manager-modal";
 
 const SpielEditor = dynamic(
-  () => import("@/components/editor/spiel-editor").then((module) => module.SpielEditor),
+  () =>
+    import("@/components/editor/spiel-editor").then(
+      (module) => module.SpielEditor,
+    ),
   {
     ssr: false,
     loading: () => (
-      <div className="border border-[#e8ecef] rounded-lg h-[420px] bg-white animate-pulse" />
+      <div className="border border-border rounded-lg h-[420px] bg-card animate-pulse" />
     ),
   },
 );
@@ -25,7 +35,7 @@ type Option = {
 
 type NewSpielFormProps = {
   departments: Option[];
-  categories: Option[];
+  categories: CategoryOption[];
 };
 
 export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
@@ -33,6 +43,8 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
   const [title, setTitle] = useState("");
   const [departmentId, setDepartmentId] = useState(departments[0]?.id ?? "");
   const [categoryId, setCategoryId] = useState("");
+  const [categoryOptions, setCategoryOptions] = useState(categories);
+  const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [editorValue, setEditorValue] = useState<SpielEditorValue>({
     html: "",
     json: "",
@@ -44,6 +56,10 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
   const [isVariablesLoading, setIsVariablesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const insertTokenRef = useRef<((token: string) => void) | null>(null);
+
+  useEffect(() => {
+    setCategoryOptions(categories);
+  }, [categories]);
 
   useEffect(() => {
     let isMounted = true;
@@ -117,9 +133,9 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     setIsSaving(false);
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       setError(body?.error ?? "Unable to save spiel.");
       return;
     }
@@ -176,13 +192,92 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     setVariables((current) => current.filter((item) => item.id !== id));
   }
 
+  async function createCategory(input: { name: string; description: string }) {
+    const response = await fetch("/api/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(input),
+    });
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+      throw new Error(body?.error ?? "Unable to create category.");
+    }
+
+    const category = (await response.json()) as CategoryOption;
+
+    setCategoryOptions((current) =>
+      [...current, category].sort((left, right) =>
+        left.name.localeCompare(right.name),
+      ),
+    );
+    setCategoryId(category.id);
+  }
+
+  async function updateCategory(
+    id: string,
+    updates: { name?: string; description?: string },
+  ) {
+    const response = await fetch(`/api/categories/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+      throw new Error(body?.error ?? "Unable to update category.");
+    }
+
+    const category = (await response.json()) as CategoryOption;
+
+    setCategoryOptions((current) =>
+      current
+        .map((item) => (item.id === id ? category : item))
+        .sort((left, right) => left.name.localeCompare(right.name)),
+    );
+  }
+
+  async function deleteCategory(id: string) {
+    const response = await fetch(`/api/categories/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+      throw new Error(body?.error ?? "Unable to delete category.");
+    }
+
+    setCategoryOptions((current) => current.filter((item) => item.id !== id));
+    setCategoryId((current) => (current === id ? "" : current));
+  }
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-8 py-4 border-b border-[#e8ecef] bg-white">
+      <CategoryManagerModal
+        categories={categoryOptions}
+        isOpen={isCategoryManagerOpen}
+        onClose={() => setIsCategoryManagerOpen(false)}
+        onCreate={createCategory}
+        onUpdate={updateCategory}
+        onDelete={deleteCategory}
+      />
+
+      <div className="flex items-center justify-between px-8 py-4 border-b border-border bg-card">
         <div className="flex items-center gap-4">
           <Link
             href="/spiels"
-            className="text-[#49636f] hover:text-[#2b3437] transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             title="Back to Library"
           >
             <X className="w-4 h-4" />
@@ -191,7 +286,7 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Untitled Spiel"
-            className="font-display text-lg font-semibold text-[#2b3437] bg-transparent border-none outline-none placeholder:text-[#abb3b7] w-72"
+            className="font-display text-lg font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-72"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -199,7 +294,7 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
             type="button"
             onClick={handleCopy}
             disabled={!editorValue.html}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-[#49636f] border border-[#e8ecef] hover:border-[#005db5]/30 hover:text-[#005db5] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-muted-foreground border border-border hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {copied ? (
               <>
@@ -217,7 +312,7 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
             type="button"
             onClick={handleSave}
             disabled={!title || !editorValue.html || !departmentId || isSaving}
-            className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-white bg-[#005db5] hover:bg-[#0052a0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Save className="w-3.5 h-3.5" />
             {isSaving ? "Saving..." : "Save Spiel"}
@@ -232,7 +327,7 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
               <select
                 value={departmentId}
                 onChange={(event) => setDepartmentId(event.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-[#e8ecef] rounded-md text-[#49636f] bg-white outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10 transition-all"
+                className="flex-1 px-3 py-2 text-sm border border-border rounded-md text-muted-foreground bg-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
               >
                 <option value="">Select Department</option>
                 {departments.map((department) => (
@@ -241,18 +336,28 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
                   </option>
                 ))}
               </select>
-              <select
-                value={categoryId}
-                onChange={(event) => setCategoryId(event.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-[#e8ecef] rounded-md text-[#49636f] bg-white outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10 transition-all"
-              >
-                <option value="">Select Category (optional)</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+              <div className="flex flex-1 items-center gap-2">
+                <select
+                  value={categoryId}
+                  onChange={(event) => setCategoryId(event.target.value)}
+                  className="min-w-0 flex-1 px-3 py-2 text-sm border border-border rounded-md text-muted-foreground bg-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                >
+                  <option value="">Select Category (optional)</option>
+                  {categoryOptions.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setIsCategoryManagerOpen(true)}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+                >
+                  <Plus className="h-4 w-4" />
+                  Category
+                </button>
+              </div>
             </div>
 
             <SpielEditorWithInsert
@@ -266,9 +371,9 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
               </p>
             )}
 
-            <p className="mt-3 text-xs text-[#abb3b7]">
+            <p className="mt-3 text-xs text-muted-foreground/60">
               Use{" "}
-              <code className="bg-[#d6e3ff]/60 text-[#005db5] px-1 rounded">
+              <code className="bg-primary/10 text-primary px-1 rounded">
                 [TokenName]
               </code>{" "}
               for dynamic placeholders. Define values in the Variables panel →
@@ -276,7 +381,7 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
           </div>
         </div>
 
-        <div className="w-[240px] shrink-0 border-l border-[#e8ecef] bg-white overflow-y-auto">
+        <div className="w-[240px] shrink-0 border-l border-border bg-card overflow-y-auto">
           <VariablePanel
             variables={variables}
             isLoading={isVariablesLoading}

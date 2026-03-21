@@ -6,6 +6,7 @@ const AUTH_PATHS = new Set(["/login", "/signup"]);
 const PROTECTED_PREFIXES = [
   "/dashboard",
   "/spiels",
+  "/archive",
   "/departments",
   "/categories",
   "/users",
@@ -31,5 +32,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/signup", "/dashboard/:path*", "/spiels/:path*", "/departments/:path*", "/categories/:path*", "/users/:path*", "/profile/:path*"],
+  matcher: ["/login", "/signup", "/dashboard/:path*", "/spiels/:path*", "/archive/:path*", "/departments/:path*", "/categories/:path*", "/users/:path*", "/profile/:path*"],
 };

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronUp, LogOut, UserCircle2 } from "lucide-react";
 import { authClient } from "@/lib/auth/auth-client";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 type AccountActionsProps = {
   initial: string;
@@ -58,41 +59,49 @@ export function AccountActions({
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-left transition-colors hover:border-[#e8ecef] hover:bg-[#f6f8f9]"
+        className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-left transition-colors hover:border-border hover:bg-muted"
         aria-haspopup="menu"
         aria-expanded={isOpen}
       >
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#d6e3ff]">
-          <span className="text-[10px] font-bold text-[#005db5]">{initial}</span>
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15">
+          <span className="text-[10px] font-bold text-primary">{initial}</span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-xs font-semibold text-[#2b3437]">{name}</p>
-          <p className="truncate text-[10px] text-[#abb3b7]">
+          <p className="truncate text-xs font-semibold text-foreground">
+            {name}
+          </p>
+          <p className="truncate text-[10px] text-muted-foreground">
             {email} • {role}
           </p>
         </div>
         <ChevronUp
-          className={`h-4 w-4 shrink-0 text-[#8a989e] transition-transform ${
+          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
             isOpen ? "rotate-0" : "rotate-180"
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-[calc(100%+0.5rem)] left-0 right-0 rounded-xl border border-[#e8ecef] bg-white p-1.5 shadow-[0_14px_40px_rgba(24,39,75,0.12)]">
+        <div className="absolute bottom-[calc(100%+0.5rem)] left-0 right-0 rounded-xl border border-border bg-popover p-1.5 shadow-[0_14px_40px_rgba(0,0,0,0.18)]">
           <Link
             href="/profile"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[#49636f] transition-colors hover:bg-[#f3f6f8] hover:text-[#2b3437]"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
             <UserCircle2 className="h-4 w-4" />
             Profile
           </Link>
+          <div className="flex items-center justify-between rounded-lg px-3 py-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              Theme
+            </span>
+            <ThemeToggle />
+          </div>
           <button
             type="button"
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[#49636f] transition-colors hover:bg-[#f3f6f8] hover:text-[#2b3437] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             <LogOut className="h-4 w-4" />
             {isSigningOut ? "Logging out..." : "Logout"}

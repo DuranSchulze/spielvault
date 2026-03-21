@@ -64,7 +64,9 @@ export function ProfileForm({
     setIsSavingPassword(false);
 
     if (result.error) {
-      setPasswordError("Unable to change password. Check your current password and try again.");
+      setPasswordError(
+        "Unable to change password. Check your current password and try again.",
+      );
       return;
     }
 
@@ -77,52 +79,52 @@ export function ProfileForm({
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <form
         onSubmit={handleProfileSubmit}
-        className="rounded-md border border-[#abb3b7]/20 bg-white p-6"
+        className="rounded-md border border-border bg-card p-6"
       >
-        <h2 className="font-display text-lg font-semibold text-[#2b3437]">
+        <h2 className="font-display text-lg font-semibold text-foreground">
           Profile
         </h2>
-        <p className="mt-1 text-sm text-[#49636f]">
+        <p className="mt-1 text-sm text-muted-foreground">
           Update the basic details tied to your account.
         </p>
 
         <div className="mt-6 grid gap-4">
           <label className="grid gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#49636f]">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Full Name
             </span>
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="w-full rounded-md border border-[#e8ecef] px-3 py-2.5 text-sm text-[#2b3437] outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10"
+              className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
           </label>
 
           <label className="grid gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#49636f]">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Email Address
             </span>
             <input
               value={email}
               readOnly
-              className="w-full rounded-md border border-[#e8ecef] bg-[#f8f9fa] px-3 py-2.5 text-sm text-[#66757d]"
+              className="w-full rounded-md border border-border bg-muted px-3 py-2.5 text-sm text-muted-foreground"
             />
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#49636f]">
+              <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 Role
               </span>
-              <div className="rounded-md border border-[#e8ecef] bg-[#f8f9fa] px-3 py-2.5 text-sm text-[#66757d]">
+              <div className="rounded-md border border-border bg-muted px-3 py-2.5 text-sm text-muted-foreground">
                 {role}
               </div>
             </div>
             <div className="grid gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#49636f]">
+              <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 Company
               </span>
-              <div className="rounded-md border border-[#e8ecef] bg-[#f8f9fa] px-3 py-2.5 text-sm text-[#66757d]">
+              <div className="rounded-md border border-border bg-muted px-3 py-2.5 text-sm text-muted-foreground">
                 {companyName ?? "Not assigned"}
               </div>
             </div>
@@ -142,7 +144,7 @@ export function ProfileForm({
           <button
             type="submit"
             disabled={isSavingProfile || !name.trim()}
-            className="inline-flex items-center rounded-md bg-[#005db5] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#0052a0] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isSavingProfile ? "Saving..." : "Save Profile"}
           </button>
@@ -151,37 +153,37 @@ export function ProfileForm({
 
       <form
         onSubmit={handlePasswordSubmit}
-        className="rounded-md border border-[#abb3b7]/20 bg-white p-6"
+        className="rounded-md border border-border bg-card p-6"
       >
-        <h2 className="font-display text-lg font-semibold text-[#2b3437]">
+        <h2 className="font-display text-lg font-semibold text-foreground">
           Security
         </h2>
-        <p className="mt-1 text-sm text-[#49636f]">
+        <p className="mt-1 text-sm text-muted-foreground">
           Change your password and revoke other active sessions.
         </p>
 
         <div className="mt-6 grid gap-4">
           <label className="grid gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#49636f]">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Current Password
             </span>
             <input
               type="password"
               value={currentPassword}
               onChange={(event) => setCurrentPassword(event.target.value)}
-              className="w-full rounded-md border border-[#e8ecef] px-3 py-2.5 text-sm text-[#2b3437] outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10"
+              className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
           </label>
 
           <label className="grid gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#49636f]">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               New Password
             </span>
             <input
               type="password"
               value={newPassword}
               onChange={(event) => setNewPassword(event.target.value)}
-              className="w-full rounded-md border border-[#e8ecef] px-3 py-2.5 text-sm text-[#2b3437] outline-none focus:border-[#005db5] focus:ring-2 focus:ring-[#005db5]/10"
+              className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
           </label>
         </div>
@@ -199,7 +201,7 @@ export function ProfileForm({
           <button
             type="submit"
             disabled={isSavingPassword || !currentPassword || !newPassword}
-            className="inline-flex items-center rounded-md bg-[#2b3437] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#20282b] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center rounded-md bg-foreground px-4 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isSavingPassword ? "Updating..." : "Change Password"}
           </button>

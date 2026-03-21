@@ -37,7 +37,8 @@ export function VariablePanel({
     const key = newKey.trim();
     const value = newValue.trim();
     if (!key || !value) return;
-    if (variables.some((v) => v.key.toLowerCase() === key.toLowerCase())) return;
+    if (variables.some((v) => v.key.toLowerCase() === key.toLowerCase()))
+      return;
     setError(null);
     setIsSubmitting(true);
 
@@ -86,13 +87,13 @@ export function VariablePanel({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 pt-4 pb-3 border-b border-[#e8ecef]">
-        <p className="text-[10px] font-semibold text-[#abb3b7] uppercase tracking-widest mb-3">
+      <div className="px-4 pt-4 pb-3 border-b border-border">
+        <p className="text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-widest mb-3">
           Variables
         </p>
-        <p className="text-xs text-[#49636f] leading-relaxed mb-3">
+        <p className="text-xs text-muted-foreground leading-relaxed mb-3">
           Define reusable values. Insert as{" "}
-          <code className="bg-[#d6e3ff]/60 text-[#005db5] px-1 rounded text-[11px]">
+          <code className="bg-primary/10 text-primary px-1 rounded text-[11px]">
             [Key]
           </code>{" "}
           tokens in your spiel.
@@ -104,21 +105,21 @@ export function VariablePanel({
             value={newKey}
             onChange={(e) => setNewKey(e.target.value)}
             placeholder="Key (e.g. Company)"
-            className="w-full px-2.5 py-1.5 text-xs border border-[#e8ecef] rounded-md bg-white text-[#2b3437] placeholder:text-[#abb3b7] outline-none focus:border-[#005db5] focus:ring-1 focus:ring-[#005db5]/10 transition-all"
+            className="w-full px-2.5 py-1.5 text-xs border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary focus:ring-1 focus:ring-primary/10 transition-all"
             onKeyDown={(e) => e.key === "Enter" && addVariable()}
           />
           <input
             value={newValue}
             onChange={(e) => setNewValue(e.target.value)}
             placeholder="Value (e.g. FilePino)"
-            className="w-full px-2.5 py-1.5 text-xs border border-[#e8ecef] rounded-md bg-white text-[#2b3437] placeholder:text-[#abb3b7] outline-none focus:border-[#005db5] focus:ring-1 focus:ring-[#005db5]/10 transition-all"
+            className="w-full px-2.5 py-1.5 text-xs border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary focus:ring-1 focus:ring-primary/10 transition-all"
             onKeyDown={(e) => e.key === "Enter" && addVariable()}
           />
           <button
             type="button"
             onClick={addVariable}
             disabled={!newKey.trim() || !newValue.trim() || isSubmitting}
-            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold bg-[#005db5] text-white hover:bg-[#0052a0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Plus className="w-3 h-3" />
             Add Variable
@@ -132,17 +133,21 @@ export function VariablePanel({
           <p className="text-xs text-red-600 text-center py-2">{error}</p>
         )}
         {isLoading ? (
-          <p className="text-xs text-[#abb3b7] text-center py-4">Loading variables...</p>
+          <p className="text-xs text-muted-foreground/60 text-center py-4">
+            Loading variables...
+          </p>
         ) : variables.length === 0 ? (
-          <p className="text-xs text-[#abb3b7] text-center py-4">No variables yet.</p>
+          <p className="text-xs text-muted-foreground/60 text-center py-4">
+            No variables yet.
+          </p>
         ) : null}
         {variables.map((v) => (
           <div
             key={v.id}
-            className="group border border-[#e8ecef] rounded-lg px-3 py-2.5 bg-white hover:border-[#005db5]/30 transition-colors"
+            className="group border border-border rounded-lg px-3 py-2.5 bg-card hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-[11px] font-semibold text-[#005db5] bg-[#d6e3ff]/60 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                 [{v.key}]
               </span>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -150,7 +155,7 @@ export function VariablePanel({
                   type="button"
                   onClick={() => onInsert(`[${v.key}]`)}
                   title="Insert token"
-                  className="p-1 rounded text-[#49636f] hover:text-[#005db5] hover:bg-[#d6e3ff]/40 transition-colors"
+                  className="p-1 rounded text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 >
                   <ChevronRight className="w-3 h-3" />
                 </button>
@@ -159,7 +164,7 @@ export function VariablePanel({
                   onClick={() => removeVariable(v.id)}
                   title="Delete"
                   disabled={isSubmitting}
-                  className="p-1 rounded text-[#49636f] hover:text-red-500 hover:bg-red-50 transition-colors"
+                  className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -176,11 +181,11 @@ export function VariablePanel({
                   if (e.key === "Enter") commitEdit(v.id);
                   if (e.key === "Escape") setEditingId(null);
                 }}
-                className="w-full text-xs text-[#2b3437] border-b border-[#005db5] outline-none bg-transparent pb-0.5"
+                className="w-full text-xs text-foreground border-b border-primary outline-none bg-transparent pb-0.5"
               />
             ) : (
               <p
-                className="text-xs text-[#49636f] truncate cursor-pointer hover:text-[#2b3437] transition-colors"
+                className="text-xs text-muted-foreground truncate cursor-pointer hover:text-foreground transition-colors"
                 title="Click to edit value"
                 onClick={() => startEdit(v)}
               >

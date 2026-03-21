@@ -8,23 +8,23 @@ export default function SignupPage() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="font-display text-2xl font-bold text-[#2b3437] tracking-tight">
+        <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
           Sign-up Is Managed
         </h2>
-        <p className="mt-1 text-sm text-[#49636f]">
+        <p className="mt-1 text-sm text-muted-foreground">
           Accounts are provisioned by an administrator during this phase.
         </p>
       </div>
 
-      <div className="rounded-lg border border-[#e8ecef] bg-white px-4 py-4 text-sm text-[#49636f]">
+      <div className="rounded-lg border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
         Use the seeded admin account or ask your workspace admin to invite you.
       </div>
 
-      <p className="mt-6 text-center text-sm text-[#49636f]">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="text-[#005db5] font-semibold hover:underline"
+          className="text-primary font-semibold hover:underline"
         >
           Sign in to Vault
         </Link>

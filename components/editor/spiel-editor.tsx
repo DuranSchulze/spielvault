@@ -87,8 +87,8 @@ function ToolbarButton({
       className={cn(
         "flex items-center justify-center w-7 h-7 rounded text-sm transition-colors",
         active
-          ? "bg-[#005db5] text-white"
-          : "text-[#49636f] hover:bg-[#e8ecef] hover:text-[#2b3437]",
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground",
         disabled && "opacity-30 cursor-not-allowed",
       )}
     >
@@ -98,7 +98,7 @@ function ToolbarButton({
 }
 
 function Divider() {
-  return <div className="w-px h-5 bg-[#e8ecef] mx-0.5" />;
+  return <div className="w-px h-5 bg-border mx-0.5" />;
 }
 
 // ─── Main editor ─────────────────────────────────────────────────────────────
@@ -185,9 +185,9 @@ export function SpielEditor({
   if (!editor) return null;
 
   return (
-    <div className="border border-[#e8ecef] rounded-lg overflow-hidden bg-white focus-within:border-[#005db5] focus-within:ring-2 focus-within:ring-[#005db5]/10 transition-all">
+    <div className="border border-border rounded-lg overflow-hidden bg-card focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-3 py-2 border-b border-[#e8ecef] bg-[#f8f9fa] flex-wrap">
+      <div className="flex items-center gap-0.5 px-3 py-2 border-b border-border bg-muted/50 flex-wrap">
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive("bold")}
