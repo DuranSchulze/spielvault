@@ -11,29 +11,58 @@ export type SpielVar = {
 
 interface VariablePanelProps {
   variables: SpielVar[];
-  onChange: (vars: SpielVar[]) => void;
+  isLoading?: boolean;
+  onCreate: (variable: Pick<SpielVar, "key" | "value">) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+  onUpdate: (id: string, updates: Partial<SpielVar>) => Promise<void>;
   onInsert: (token: string) => void;
 }
 
-export function VariablePanel({ variables, onChange, onInsert }: VariablePanelProps) {
+export function VariablePanel({
+  variables,
+  isLoading = false,
+  onCreate,
+  onDelete,
+  onUpdate,
+  onInsert,
+}: VariablePanelProps) {
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function addVariable() {
+  async function addVariable() {
     const key = newKey.trim();
     const value = newValue.trim();
     if (!key || !value) return;
     if (variables.some((v) => v.key.toLowerCase() === key.toLowerCase())) return;
-    const next: SpielVar = { id: crypto.randomUUID(), key, value };
-    onChange([...variables, next]);
-    setNewKey("");
-    setNewValue("");
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await onCreate({ key, value });
+      setNewKey("");
+      setNewValue("");
+    } catch {
+      setError("Unable to add variable.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  function removeVariable(id: string) {
-    onChange(variables.filter((v) => v.id !== id));
+  async function removeVariable(id: string) {
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await onDelete(id);
+    } catch {
+      setError("Unable to delete variable.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function startEdit(v: SpielVar) {
@@ -41,9 +70,18 @@ export function VariablePanel({ variables, onChange, onInsert }: VariablePanelPr
     setEditValue(v.value);
   }
 
-  function commitEdit(id: string) {
-    onChange(variables.map((v) => (v.id === id ? { ...v, value: editValue } : v)));
-    setEditingId(null);
+  async function commitEdit(id: string) {
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await onUpdate(id, { value: editValue });
+      setEditingId(null);
+    } catch {
+      setError("Unable to update variable.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -79,7 +117,7 @@ export function VariablePanel({ variables, onChange, onInsert }: VariablePanelPr
           <button
             type="button"
             onClick={addVariable}
-            disabled={!newKey.trim() || !newValue.trim()}
+            disabled={!newKey.trim() || !newValue.trim() || isSubmitting}
             className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold bg-[#005db5] text-white hover:bg-[#0052a0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Plus className="w-3 h-3" />
@@ -90,9 +128,14 @@ export function VariablePanel({ variables, onChange, onInsert }: VariablePanelPr
 
       {/* Variable list */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1.5">
-        {variables.length === 0 && (
-          <p className="text-xs text-[#abb3b7] text-center py-4">No variables yet.</p>
+        {error && (
+          <p className="text-xs text-red-600 text-center py-2">{error}</p>
         )}
+        {isLoading ? (
+          <p className="text-xs text-[#abb3b7] text-center py-4">Loading variables...</p>
+        ) : variables.length === 0 ? (
+          <p className="text-xs text-[#abb3b7] text-center py-4">No variables yet.</p>
+        ) : null}
         {variables.map((v) => (
           <div
             key={v.id}
@@ -115,6 +158,7 @@ export function VariablePanel({ variables, onChange, onInsert }: VariablePanelPr
                   type="button"
                   onClick={() => removeVariable(v.id)}
                   title="Delete"
+                  disabled={isSubmitting}
                   className="p-1 rounded text-[#49636f] hover:text-red-500 hover:bg-red-50 transition-colors"
                 >
                   <Trash2 className="w-3 h-3" />

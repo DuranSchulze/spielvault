@@ -1,16 +1,25 @@
 import Link from "next/link";
+import { requireAccessContext } from "@/lib/auth/session";
+import { prisma } from "@/lib/prisma/client";
 
 export const metadata = {
   title: "Dashboard — Spiel Vault",
 };
 
-const STATS = [
-  { label: "Total Spiels", value: "—", href: "/spiels" },
-  { label: "Departments", value: "—", href: "/departments" },
-  { label: "Team Members", value: "—", href: "/users" },
-];
+export default async function DashboardPage() {
+  const { companyId } = await requireAccessContext();
+  const [spielCount, departmentCount, userCount] = await Promise.all([
+    prisma.spiel.count({ where: { companyId } }),
+    prisma.department.count({ where: { companyId } }),
+    prisma.user.count({ where: { companyId } }),
+  ]);
 
-export default function DashboardPage() {
+  const stats = [
+    { label: "Total Spiels", value: String(spielCount), href: "/spiels" },
+    { label: "Departments", value: String(departmentCount), href: "/departments" },
+    { label: "Team Members", value: String(userCount), href: "/users" },
+  ];
+
   return (
     <div className="flex-1 px-8 py-8 overflow-y-auto">
       <div className="mb-8">
@@ -24,7 +33,7 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {STATS.map((stat) => (
+        {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
@@ -68,7 +77,7 @@ export default function DashboardPage() {
         </p>
         <div className="bg-white border border-[#e8ecef] rounded-lg px-6 py-10 text-center">
           <p className="text-sm text-[#abb3b7]">
-            Connect your database to see activity.
+            Live activity wiring comes next. Your workspace is now reading counts from PostgreSQL.
           </p>
         </div>
       </div>

@@ -2,11 +2,26 @@
 
 import { cn } from "@/lib/utils";
 import { Copy, Pencil, Tag } from "lucide-react";
-import type { SpielWithRelations } from "@/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/index";
+
+type SpielCardData = {
+  id: string;
+  title: string;
+  contentHtml: string | null;
+  contentPlain: string | null;
+  updatedAt: Date;
+  department: {
+    id: string;
+    name: string;
+  };
+  category: {
+    id: string;
+    name: string;
+  } | null;
+};
 
 interface SpielCardProps {
-  spiel: SpielWithRelations;
+  spiel: SpielCardData;
   className?: string;
 }
 

@@ -1,7 +1,15 @@
 import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { requireServerSession } from "@/lib/auth/session";
 import Link from "next/link";
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export async function DashboardShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await requireServerSession();
+  const initial = session.user.name.trim().charAt(0).toUpperCase() || "U";
+
   return (
     <div className="flex min-h-screen bg-[#f8f9fa]">
       {/* Sidebar */}
@@ -29,13 +37,17 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <div className="px-6 py-4 border-t border-[#e8ecef]">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-full bg-[#d6e3ff] flex items-center justify-center">
-              <span className="text-[10px] font-bold text-[#005db5]">U</span>
+              <span className="text-[10px] font-bold text-[#005db5]">
+                {initial}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-[#2b3437] truncate">
-                User
+                {session.user.name}
               </p>
-              <p className="text-[10px] text-[#abb3b7] truncate">employee</p>
+              <p className="text-[10px] text-[#abb3b7] truncate">
+                {session.user.email} • {session.user.role}
+              </p>
             </div>
           </div>
         </div>
