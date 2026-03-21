@@ -11,6 +11,7 @@ import {
   Layers,
   HelpCircle,
   Archive,
+  UserCircle2,
 } from "lucide-react";
 
 const mainNav = [
@@ -22,6 +23,7 @@ const mainNav = [
 ];
 
 const systemNav = [
+  { label: "Profile", href: "/profile", icon: UserCircle2 },
   { label: "Support", href: "/support", icon: HelpCircle },
   { label: "Archive", href: "/archive", icon: Archive },
 ];

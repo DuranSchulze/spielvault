@@ -9,6 +9,7 @@ const PROTECTED_PREFIXES = [
   "/departments",
   "/categories",
   "/users",
+  "/profile",
 ];
 
 export function proxy(request: NextRequest) {
@@ -30,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/signup", "/dashboard/:path*", "/spiels/:path*", "/departments/:path*", "/categories/:path*", "/users/:path*"],
+  matcher: ["/login", "/signup", "/dashboard/:path*", "/spiels/:path*", "/departments/:path*", "/categories/:path*", "/users/:path*", "/profile/:path*"],
 };
