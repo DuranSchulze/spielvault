@@ -23,6 +23,11 @@ type SpielListItem = {
   } | null;
 };
 
+type FilterOption = {
+  id: string;
+  name: string;
+};
+
 type SearchParams = Promise<{
   department?: string;
   category?: string;
@@ -84,6 +89,8 @@ export default async function SpielsPage({
     }),
   ]);
 
+  const filterDepartments = departments as unknown as FilterOption[];
+  const filterCategories = categories as unknown as FilterOption[];
   const spiels = rawSpiels as unknown as SpielListItem[];
 
   return (
@@ -123,7 +130,7 @@ export default async function SpielsPage({
             >
               All
             </Link>
-            {departments.map((department) => (
+            {filterDepartments.map((department) => (
               <Link
                 key={department.id}
                 href={buildFilterHref({
@@ -154,7 +161,7 @@ export default async function SpielsPage({
             >
               All Categories
             </Link>
-            {categories.map((category) => (
+            {filterCategories.map((category) => (
               <Link
                 key={category.id}
                 href={buildFilterHref({

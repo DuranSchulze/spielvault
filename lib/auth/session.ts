@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma/client";
 
+type MembershipRecord = {
+  departmentId: string;
+};
+
 export async function getServerSession() {
   return auth.api.getSession({
     headers: new Headers(await headers()),
@@ -35,7 +39,9 @@ export async function requireAccessContext() {
   return {
     session,
     companyId,
-    departmentIds: memberships.map((membership) => membership.departmentId),
+    departmentIds: (memberships as MembershipRecord[]).map(
+      (membership) => membership.departmentId,
+    ),
   };
 }
 
@@ -54,6 +60,8 @@ export async function getAccessContextOrNull() {
   return {
     session,
     companyId: session.user.companyId,
-    departmentIds: memberships.map((membership) => membership.departmentId),
+    departmentIds: (memberships as MembershipRecord[]).map(
+      (membership) => membership.departmentId,
+    ),
   };
 }
