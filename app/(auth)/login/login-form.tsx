@@ -4,6 +4,54 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth/auth-client";
+import { goeyToast } from "@/components/ui/goey-toaster";
+
+function getLoginErrorMessage(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return "Unable to sign in right now. Please try again.";
+  }
+
+  const details = error as {
+    message?: string;
+    status?: number;
+    statusText?: string;
+    error?: {
+      message?: string;
+      code?: string;
+    };
+  };
+
+  const message =
+    details.error?.message || details.message || details.statusText || "";
+
+  if (
+    details.status === 401 ||
+    message.toLowerCase().includes("invalid credential") ||
+    message.toLowerCase().includes("invalid email") ||
+    message.toLowerCase().includes("password")
+  ) {
+    return "We couldn't sign you in with that email and password.";
+  }
+
+  if (
+    details.status === 403 ||
+    message.toLowerCase().includes("sign up is disabled") ||
+    message.toLowerCase().includes("signup") ||
+    message.toLowerCase().includes("not allowed")
+  ) {
+    return "This workspace does not allow self-serve account creation. Ask your admin to create your account first.";
+  }
+
+  if (
+    message.toLowerCase().includes("fetch") ||
+    message.toLowerCase().includes("network") ||
+    details.status === 0
+  ) {
+    return "The app could not reach the sign-in service. Check your deployment URL and auth environment variables.";
+  }
+
+  return message || "Unable to sign in right now. Please try again.";
+}
 
 export function LoginForm() {
   const router = useRouter();
@@ -27,10 +75,17 @@ export function LoginForm() {
     setIsSubmitting(false);
 
     if (result.error) {
-      setError("Invalid credentials.");
+      const message = getLoginErrorMessage(result.error);
+      setError(message);
+      goeyToast.error("Sign-in failed", {
+        description: message,
+      });
       return;
     }
 
+    goeyToast.success("Signed in", {
+      description: "Welcome back to Spiel Vault.",
+    });
     router.push("/dashboard");
     router.refresh();
   }
@@ -44,6 +99,10 @@ export function LoginForm() {
         <p className="mt-1 text-sm text-muted-foreground">
           Sign in to your curated workspace.
         </p>
+        <div className="mt-4 rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+          If login fails, it usually means either your account has not been
+          created by an admin yet, or the email/password is incorrect.
+        </div>
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
@@ -142,9 +201,13 @@ export function LoginForm() {
         </label>
 
         {error && (
-          <p className="text-sm text-red-600" role="alert">
-            {error}
-          </p>
+          <div
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            role="alert"
+          >
+            <p className="font-medium">Unable to sign in</p>
+            <p className="mt-1">{error}</p>
+          </div>
         )}
 
         <button
@@ -162,7 +225,7 @@ export function LoginForm() {
           href="/signup"
           className="text-primary font-semibold hover:underline"
         >
-          Contact your admin
+          Create an account
         </Link>
       </p>
     </div>
