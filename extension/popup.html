@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpielVault</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <span class="brand">Spiel<span class="accent">Vault</span></span>
+      <button class="settings-btn" id="settingsBtn" title="Settings">⚙</button>
+    </div>
+
+    <div id="setupMsg" class="setup-msg" style="display:none;">
+      <p>Configure your SpielVault URL and API token in</p>
+      <button id="openOptions">Extension Settings →</button>
+    </div>
+
+    <div id="main" style="display:none;">
+      <div class="search-row">
+        <input type="search" id="searchInput" placeholder="Search spiels…" autocomplete="off" />
+      </div>
+
+      <div id="results" class="results"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

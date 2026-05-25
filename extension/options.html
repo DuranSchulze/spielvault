@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpielVault — Options</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f9fafb; color: #111827; padding: 32px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px; max-width: 480px; }
+    h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    p.sub { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+    label { display: block; margin-bottom: 16px; }
+    label span { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7280; margin-bottom: 6px; }
+    input { width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; font-size: 13px; outline: none; }
+    input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+    button { background: #6366f1; color: #fff; border: none; border-radius: 6px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #4f46e5; }
+    #status { margin-top: 12px; font-size: 13px; color: #16a34a; display: none; }
+    a { color: #6366f1; font-size: 12px; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>SpielVault Extension</h1>
+    <p class="sub">Connect your SpielVault workspace to use the popup.</p>
+
+    <label>
+      <span>SpielVault URL</span>
+      <input type="url" id="url" placeholder="https://your-domain.com" />
+    </label>
+
+    <label>
+      <span>API Token</span>
+      <input type="password" id="token" placeholder="svt_…" />
+    </label>
+
+    <p style="font-size:12px;color:#6b7280;margin-bottom:16px;">
+      Generate a token at <a id="profileLink" href="#" target="_blank">your profile page</a> under
+      &ldquo;Browser Extension&rdquo;.
+    </p>
+
+    <button id="save">Save Settings</button>
+    <p id="status">Settings saved.</p>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

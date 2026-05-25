@@ -26,12 +26,16 @@ model User {
   companyId String?
 
   // Relations
-  company     Company?         @relation(fields: [companyId], references: [id])
+  company     Company?           @relation(fields: [companyId], references: [id])
   departments UserDepartment[]
   spiels      Spiel[]
   sessions    Session[]
   accounts    Account[]
   auditLogs   AuditLog[]
+  favorites       UserSpielFavorite[]
+  apiTokens       ApiToken[]
+  spielVersions   SpielVersion[]
+  spielApprovals  SpielApproval[]
 
   @@map("user")
 }
@@ -169,10 +173,70 @@ model Spiel {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  company    Company    @relation(fields: [companyId], references: [id])
-  department Department @relation(fields: [departmentId], references: [id])
-  category   Category?  @relation(fields: [categoryId], references: [id])
-  createdBy  User       @relation(fields: [createdByUserId], references: [id])
+  company      Company             @relation(fields: [companyId], references: [id])
+  department   Department          @relation(fields: [departmentId], references: [id])
+  category     Category?           @relation(fields: [categoryId], references: [id])
+  createdBy    User                @relation(fields: [createdByUserId], references: [id])
+  favoritedBy  UserSpielFavorite[]
+  versions     SpielVersion[]
+  approvals    SpielApproval[]
+}
+
+model UserSpielFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  spielId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  spiel Spiel @relation(fields: [spielId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, spielId])
+  @@map("user_spiel_favorite")
+}
+
+model SpielApproval {
+  id         String   @id @default(cuid())
+  spielId    String
+  reviewerId String
+  action     String   // "approved" | "rejected"
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  spiel    Spiel @relation(fields: [spielId], references: [id], onDelete: Cascade)
+  reviewer User  @relation(fields: [reviewerId], references: [id])
+
+  @@map("spiel_approval")
+}
+
+model SpielVersion {
+  id            String   @id @default(cuid())
+  spielId       String
+  savedByUserId String
+  title         String
+  contentHtml   String?  @db.Text
+  contentJson   String?  @db.Text
+  contentPlain  String?  @db.Text
+  categoryId    String?
+  createdAt     DateTime @default(now())
+
+  spiel   Spiel @relation(fields: [spielId], references: [id], onDelete: Cascade)
+  savedBy User  @relation(fields: [savedByUserId], references: [id])
+
+  @@map("spiel_version")
+}
+
+model ApiToken {
+  id         String    @id @default(cuid())
+  userId     String
+  token      String    @unique
+  name       String    @default("Browser Extension")
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("api_token")
 }
 
 model AuditLog {

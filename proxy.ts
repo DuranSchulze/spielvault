@@ -2,7 +2,6 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { hasSessionCookie } from "@/lib/auth/proxy";
 
-const AUTH_PATHS = new Set(["/login", "/signup"]);
 const PROTECTED_PREFIXES = [
   "/dashboard",
   "/spiels",
@@ -11,6 +10,8 @@ const PROTECTED_PREFIXES = [
   "/categories",
   "/users",
   "/profile",
+  "/activity",
+  "/companies",
 ];
 
 export function proxy(request: NextRequest) {
@@ -24,13 +25,19 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (AUTH_PATHS.has(pathname) && isAuthenticated) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/signup", "/dashboard/:path*", "/spiels/:path*", "/archive/:path*", "/departments/:path*", "/categories/:path*", "/users/:path*", "/profile/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/spiels/:path*",
+    "/archive/:path*",
+    "/departments/:path*",
+    "/categories/:path*",
+    "/users/:path*",
+    "/profile/:path*",
+    "/activity/:path*",
+    "/companies/:path*",
+  ],
 };

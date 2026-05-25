@@ -33,16 +33,47 @@ type Option = {
   name: string;
 };
 
+type InitialSpielData = {
+  id: string;
+  title: string;
+  departmentId: string;
+  categoryId: string | null;
+  contentHtml: string | null;
+  contentJson: string | null;
+  contentPlain: string | null;
+  status?: string;
+};
+
+type LatestRejection = {
+  comment: string | null;
+  reviewerName: string;
+} | null;
+
 type NewSpielFormProps = {
   departments: Option[];
   categories: CategoryOption[];
+  initialData?: InitialSpielData;
+  isAdmin?: boolean;
+  userRole?: string;
+  latestRejection?: LatestRejection;
 };
 
-export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
+export function NewSpielForm({
+  departments,
+  categories,
+  initialData,
+  isAdmin = false,
+  latestRejection,
+}: NewSpielFormProps) {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [departmentId, setDepartmentId] = useState(departments[0]?.id ?? "");
-  const [categoryId, setCategoryId] = useState("");
+  const isEditMode = !!initialData;
+  const status = initialData?.status ?? "active";
+
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [departmentId, setDepartmentId] = useState(
+    initialData?.departmentId ?? departments[0]?.id ?? "",
+  );
+  const [categoryId, setCategoryId] = useState(initialData?.categoryId ?? "");
   const [categoryOptions, setCategoryOptions] = useState(categories);
   const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [editorValue, setEditorValue] = useState<SpielEditorValue>({
@@ -55,6 +86,10 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isVariablesLoading, setIsVariablesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [showRejectInput, setShowRejectInput] = useState(false);
+  const [rejectComment, setRejectComment] = useState("");
   const insertTokenRef = useRef<((token: string) => void) | null>(null);
 
   useEffect(() => {
@@ -115,6 +150,39 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     setError(null);
     setIsSaving(true);
 
+    if (isEditMode && initialData) {
+      // Edit mode — PATCH existing spiel
+      const response = await fetch(`/api/spiels/${initialData.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          categoryId: categoryId || null,
+          contentHtml: editorValue.html,
+          contentJson: editorValue.json,
+          contentPlain: editorValue.plain,
+        }),
+      });
+
+      setIsSaving(false);
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setError(body?.error ?? "Unable to update spiel.");
+        return;
+      }
+
+      router.push("/spiels");
+      router.refresh();
+      return;
+    }
+
+    // Create mode — POST new spiel
+
     const response = await fetch("/api/spiels", {
       method: "POST",
       headers: {
@@ -141,6 +209,41 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     }
 
     router.push("/spiels");
+    router.refresh();
+  }
+
+  async function handleSubmitForReview() {
+    if (!initialData) return;
+    setIsSubmitting(true);
+    setError(null);
+    const res = await fetch(`/api/spiels/${initialData.id}/submit`, { method: "POST" });
+    setIsSubmitting(false);
+    if (!res.ok) {
+      const body = await res.json().catch(() => null) as { error?: string } | null;
+      setError(body?.error ?? "Unable to submit for review.");
+      return;
+    }
+    router.push("/spiels?view=drafts");
+    router.refresh();
+  }
+
+  async function handleReview(action: "approve" | "reject") {
+    if (!initialData) return;
+    setIsReviewing(true);
+    setError(null);
+    const res = await fetch(`/api/spiels/${initialData.id}/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, comment: action === "reject" ? rejectComment : undefined }),
+    });
+    setIsReviewing(false);
+    if (!res.ok) {
+      const body = await res.json().catch(() => null) as { error?: string } | null;
+      setError(body?.error ?? "Unable to complete review.");
+      return;
+    }
+    setShowRejectInput(false);
+    router.push("/spiels?view=review");
     router.refresh();
   }
 
@@ -202,9 +305,9 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     });
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       throw new Error(body?.error ?? "Unable to create category.");
     }
 
@@ -231,9 +334,9 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     });
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       throw new Error(body?.error ?? "Unable to update category.");
     }
 
@@ -252,9 +355,9 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
     });
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       throw new Error(body?.error ?? "Unable to delete category.");
     }
 
@@ -287,9 +390,85 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Untitled Spiel"
             className="font-display text-lg font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-72"
+            readOnly={isEditMode && status === "pending_review" && !isAdmin}
           />
+          {isEditMode && status !== "active" && (
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest ${
+              status === "draft"
+                ? "bg-muted text-muted-foreground"
+                : status === "pending_review"
+                ? "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400"
+                : ""
+            }`}>
+              {status === "draft" ? "Draft" : "Pending Review"}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
+          {isEditMode && (
+            <Link
+              href={`/spiels/${initialData.id}/history`}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-muted-foreground border border-border hover:border-primary/30 hover:text-primary transition-colors"
+            >
+              History
+            </Link>
+          )}
+          {/* Workflow actions */}
+          {isEditMode && status === "draft" && !isAdmin && (
+            <button
+              type="button"
+              onClick={handleSubmitForReview}
+              disabled={isSubmitting}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 transition-colors disabled:opacity-40"
+            >
+              {isSubmitting ? "Submitting…" : "Submit for Review"}
+            </button>
+          )}
+          {isEditMode && status === "pending_review" && isAdmin && !showRejectInput && (
+            <>
+              <button
+                type="button"
+                onClick={() => handleReview("approve")}
+                disabled={isReviewing}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-green-800 dark:text-green-300 border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30 hover:bg-green-100 transition-colors disabled:opacity-40"
+              >
+                {isReviewing ? "Approving…" : "Approve"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowRejectInput(true)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-red-700 dark:text-red-400 border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 transition-colors"
+              >
+                Reject
+              </button>
+            </>
+          )}
+          {isEditMode && status === "pending_review" && isAdmin && showRejectInput && (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={rejectComment}
+                onChange={(e) => setRejectComment(e.target.value)}
+                placeholder="Rejection reason (optional)"
+                className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary w-60"
+              />
+              <button
+                type="button"
+                onClick={() => handleReview("reject")}
+                disabled={isReviewing}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-red-700 dark:text-red-400 border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 transition-colors disabled:opacity-40"
+              >
+                {isReviewing ? "Rejecting…" : "Confirm Reject"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowRejectInput(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <button
             type="button"
             onClick={handleCopy}
@@ -311,14 +490,41 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
           <button
             type="button"
             onClick={handleSave}
-            disabled={!title || !editorValue.html || !departmentId || isSaving}
+            disabled={
+              !title ||
+              !editorValue.html ||
+              !departmentId ||
+              isSaving ||
+              (isEditMode && status === "pending_review" && !isAdmin)
+            }
             className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Save className="w-3.5 h-3.5" />
-            {isSaving ? "Saving..." : "Save Spiel"}
+            {isSaving
+              ? "Saving..."
+              : isEditMode
+                ? "Update Spiel"
+                : "Save Spiel"}
           </button>
         </div>
       </div>
+
+      {latestRejection && status === "draft" && (
+        <div className="px-8 py-3 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800">
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            <span className="font-semibold">Rejected by {latestRejection.reviewerName}.</span>
+            {latestRejection.comment && (
+              <span className="ml-1">{latestRejection.comment}</span>
+            )}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="px-8 py-2 bg-red-50 dark:bg-red-950/20 border-b border-red-200 dark:border-red-800">
+          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        </div>
+      )}
 
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 overflow-y-auto px-8 py-6">
@@ -363,13 +569,8 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
             <SpielEditorWithInsert
               onChange={setEditorValue}
               insertRef={insertTokenRef}
+              initialHtml={initialData?.contentHtml ?? undefined}
             />
-
-            {error && (
-              <p className="mt-3 text-sm text-red-600" role="alert">
-                {error}
-              </p>
-            )}
 
             <p className="mt-3 text-xs text-muted-foreground/60">
               Use{" "}
@@ -399,9 +600,11 @@ export function NewSpielForm({ departments, categories }: NewSpielFormProps) {
 function SpielEditorWithInsert({
   onChange,
   insertRef,
+  initialHtml,
 }: {
   onChange: (value: SpielEditorValue) => void;
   insertRef: MutableRefObject<((token: string) => void) | null>;
+  initialHtml?: string;
 }) {
   const editorRef = useRef<import("@tiptap/react").Editor | null>(null);
 
@@ -417,6 +620,7 @@ function SpielEditorWithInsert({
 
   return (
     <SpielEditor
+      initialHtml={initialHtml}
       onChange={onChange}
       onReady={(editor) => {
         editorRef.current = editor;

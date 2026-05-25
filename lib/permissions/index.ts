@@ -25,3 +25,7 @@ export function canManageSpiels(role: UserRole): boolean {
 export function canViewSpiels(role: UserRole): boolean {
   return hasRole(role, "employee");
 }
+
+export function canManageCompany(role: UserRole): boolean {
+  return hasRole(role, "super_admin");
+}

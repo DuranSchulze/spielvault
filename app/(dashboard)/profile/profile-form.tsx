@@ -76,7 +76,7 @@ export function ProfileForm({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+    <>
       <form
         onSubmit={handleProfileSubmit}
         className="rounded-md border border-border bg-card p-6"
@@ -207,6 +207,6 @@ export function ProfileForm({
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 }

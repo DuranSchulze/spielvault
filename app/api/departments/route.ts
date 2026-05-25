@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { canManageDepartment } from "@/lib/permissions";
 import { getAccessContextOrNull } from "@/lib/auth/session";
-import { prisma } from "@/lib/prisma/client";
+import { createDepartmentSchema } from "@/lib/validations/department";
+import { db } from "@/lib/drizzle/db";
+import { departments, userDepartments } from "@/lib/drizzle/schema";
+import { eq, and } from "drizzle-orm";
+import { logActivity } from "@/lib/audit/log-activity";
 import type { UserRole } from "@/types";
 import { slugify } from "@/lib/utils/index";
-
-type CreateDepartmentBody = {
-  name?: string;
-  description?: string | null;
-};
 
 export async function POST(req: NextRequest) {
   const access = await getAccessContextOrNull();
@@ -21,23 +20,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = (await req.json()) as CreateDepartmentBody;
-  const name = body.name?.trim();
-  const description = body.description?.trim() || null;
+  const body = await req.json().catch(() => ({}));
+  const parsed = createDepartmentSchema.safeParse(body);
 
-  if (!name) {
-    return NextResponse.json({ error: "Department name is required" }, { status: 400 });
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.flatten().fieldErrors },
+      { status: 400 },
+    );
   }
 
+  const { name, description } = parsed.data;
   const slug = slugify(name);
 
-  const existing = await prisma.department.findFirst({
-    where: {
-      companyId: access.companyId,
-      slug,
-    },
-    select: { id: true },
-  });
+  const [existing] = await db
+    .select({ id: departments.id })
+    .from(departments)
+    .where(and(eq(departments.companyId, access.companyId), eq(departments.slug, slug)))
+    .limit(1);
 
   if (existing) {
     return NextResponse.json(
@@ -46,27 +46,22 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const department = await prisma.department.create({
-    data: {
-      companyId: access.companyId,
-      name,
-      slug,
-      description,
-    },
-  });
+  const [department] = await db
+    .insert(departments)
+    .values({ companyId: access.companyId, name, slug, description })
+    .returning();
 
-  await prisma.userDepartment.upsert({
-    where: {
-      userId_departmentId: {
-        userId: access.session.user.id,
-        departmentId: department.id,
-      },
-    },
-    update: {},
-    create: {
-      userId: access.session.user.id,
-      departmentId: department.id,
-    },
+  await db
+    .insert(userDepartments)
+    .values({ userId: access.session.user.id, departmentId: department.id })
+    .onConflictDoNothing();
+
+  await logActivity({
+    userId: access.session.user.id,
+    action: "department.create",
+    entityType: "department",
+    entityId: department.id,
+    metadata: { name: department.name },
   });
 
   return NextResponse.json(department, { status: 201 });

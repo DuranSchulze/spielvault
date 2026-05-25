@@ -1,7 +1,9 @@
 import { AccountActions } from "@/components/layout/account-actions";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { requireServerSession } from "@/lib/auth/session";
+import { canManageDepartment, canManageCompany } from "@/lib/permissions";
 import Link from "next/link";
+import type { UserRole } from "@/types";
 
 export async function DashboardShell({
   children,
@@ -10,6 +12,8 @@ export async function DashboardShell({
 }) {
   const session = await requireServerSession();
   const initial = session.user.name.trim().charAt(0).toUpperCase() || "U";
+  const isAdmin = canManageDepartment(session.user.role as UserRole);
+  const isSuperAdmin = canManageCompany(session.user.role as UserRole);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -31,7 +35,7 @@ export async function DashboardShell({
 
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto">
-          <SidebarNav />
+          <SidebarNav isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />
         </div>
 
         {/* Footer */}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Copy, Loader2, Pencil, Tag, type LucideIcon } from "lucide-react";
+import { Copy, Loader2, Pencil, Star, Tag, type LucideIcon } from "lucide-react";
 import { formatDate } from "@/lib/utils/index";
 
 export type SpielCardData = {
@@ -11,6 +11,7 @@ export type SpielCardData = {
   contentHtml: string | null;
   contentPlain: string | null;
   updatedAt: Date;
+  isFavorited: boolean;
   department: {
     id: string;
     name: string;
@@ -29,7 +30,9 @@ interface SpielCardProps {
   actionIcon?: LucideIcon;
   actionTone?: "default" | "destructive";
   isActionPending?: boolean;
+  isFavoritePending?: boolean;
   onAction?: (spiel: SpielCardData) => void;
+  onFavoriteToggle?: (spiel: SpielCardData) => void;
 }
 
 export function SpielCard({
@@ -40,7 +43,9 @@ export function SpielCard({
   actionIcon: ActionIcon,
   actionTone = "default",
   isActionPending = false,
+  isFavoritePending = false,
   onAction,
+  onFavoriteToggle,
 }: SpielCardProps) {
   async function handleCopy() {
     const html = spiel.contentHtml;
@@ -56,6 +61,11 @@ export function SpielCard({
     } catch {
       if (plain) await navigator.clipboard.writeText(plain);
     }
+    fetch(`/api/spiels/${spiel.id}/activity`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "copy" }),
+    }).catch(() => {});
   }
 
   return (
@@ -67,6 +77,23 @@ export function SpielCard({
     >
       {/* Hover toolbar */}
       <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        {onFavoriteToggle && (
+          <button
+            onClick={() => onFavoriteToggle(spiel)}
+            disabled={isFavoritePending}
+            title={spiel.isFavorited ? "Remove from favorites" : "Add to favorites"}
+            className={cn(
+              "p-1.5 rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+              spiel.isFavorited
+                ? "text-amber-400 hover:text-amber-500 hover:bg-amber-50 !opacity-100"
+                : "text-muted-foreground hover:text-amber-400 hover:bg-accent",
+            )}
+          >
+            <Star
+              className={cn("w-3.5 h-3.5", spiel.isFavorited && "fill-amber-400")}
+            />
+          </button>
+        )}
         <button
           onClick={handleCopy}
           title="Copy spiel"

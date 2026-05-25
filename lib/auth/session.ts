@@ -1,11 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
-import { prisma } from "@/lib/prisma/client";
-
-type MembershipRecord = {
-  departmentId: string;
-};
+import { db } from "@/lib/drizzle/db";
+import { userDepartments } from "@/lib/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export async function getServerSession() {
   return auth.api.getSession({
@@ -31,17 +29,15 @@ export async function requireAccessContext() {
     redirect("/login");
   }
 
-  const memberships = await prisma.userDepartment.findMany({
-    where: { userId: session.user.id },
-    select: { departmentId: true },
-  });
+  const memberships = await db
+    .select({ departmentId: userDepartments.departmentId })
+    .from(userDepartments)
+    .where(eq(userDepartments.userId, session.user.id));
 
   return {
     session,
     companyId,
-    departmentIds: (memberships as MembershipRecord[]).map(
-      (membership) => membership.departmentId,
-    ),
+    departmentIds: memberships.map((m) => m.departmentId),
   };
 }
 
@@ -52,16 +48,14 @@ export async function getAccessContextOrNull() {
     return null;
   }
 
-  const memberships = await prisma.userDepartment.findMany({
-    where: { userId: session.user.id },
-    select: { departmentId: true },
-  });
+  const memberships = await db
+    .select({ departmentId: userDepartments.departmentId })
+    .from(userDepartments)
+    .where(eq(userDepartments.userId, session.user.id));
 
   return {
     session,
     companyId: session.user.companyId,
-    departmentIds: (memberships as MembershipRecord[]).map(
-      (membership) => membership.departmentId,
-    ),
+    departmentIds: memberships.map((m) => m.departmentId),
   };
 }

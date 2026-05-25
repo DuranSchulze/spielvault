@@ -11,6 +11,9 @@ import {
   Layers,
   Archive,
   UserCircle2,
+  Activity,
+  Settings,
+  BarChart2,
 } from "lucide-react";
 
 const mainNav = [
@@ -19,11 +22,20 @@ const mainNav = [
   { label: "Editor", href: "/spiels/new", icon: PenLine },
   { label: "Departments", href: "/departments", icon: Layers },
   { label: "Team", href: "/users", icon: Users },
+  { label: "Analytics", href: "/analytics", icon: BarChart2 },
 ];
 
 const systemNav = [
   { label: "Profile", href: "/profile", icon: UserCircle2 },
   { label: "Archive", href: "/archive", icon: Archive },
+];
+
+const adminNav = [
+  { label: "Activity", href: "/activity", icon: Activity },
+];
+
+const superAdminNav = [
+  { label: "Settings", href: "/companies", icon: Settings },
 ];
 
 function NavItem({
@@ -66,7 +78,13 @@ function NavItem({
   );
 }
 
-export function SidebarNav() {
+export function SidebarNav({
+  isAdmin = false,
+  isSuperAdmin = false,
+}: {
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
+}) {
   return (
     <nav className="flex flex-col gap-5 px-3">
       {/* Main section */}
@@ -85,6 +103,14 @@ export function SidebarNav() {
           {systemNav.map((item) => (
             <NavItem key={item.href} {...item} />
           ))}
+          {isAdmin &&
+            adminNav.map((item) => (
+              <NavItem key={item.href} {...item} />
+            ))}
+          {isSuperAdmin &&
+            superAdminNav.map((item) => (
+              <NavItem key={item.href} {...item} />
+            ))}
         </div>
       </div>
     </nav>

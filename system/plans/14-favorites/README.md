@@ -1,0 +1,182 @@
+# Plan 14 — Favorite / Pin Spiels
+
+> **Priority:** 🚀 Future (Phase 2+)
+> **Checklist Ref:** `CHECKLIST.md` → #14
+> **Status:** Ready to implement
+
+---
+
+## What
+
+Allow each user to mark spiels as favorites. Favorited spiels get a persistent
+star icon and float to the top of the library list. A "Favorites" filter chip
+lets users view only their starred spiels.
+
+---
+
+## Why
+
+Users accumulate many spiels over time. Favorites gives individuals a personal
+shortlist — a fast path to their most-used scripts without affecting what other
+users see.
+
+---
+
+## Requirements
+
+1. Any authenticated user can favorite/unfavorite any spiel they can access.
+2. Favorites are **per-user** — they don't affect other users' views.
+3. The star icon is always visible on favorited cards; appears on hover for
+   unfavorited cards.
+4. A "Favorites" filter chip on the library page filters to only the current
+   user's starred spiels.
+5. When **not** filtering by favorites, favorited spiels sort above others
+   within the current page.
+6. The toggle must be optimistic — the UI responds instantly; errors roll back.
+7. No admin-only gate — all roles can favorite.
+
+---
+
+## Approach
+
+### 1. Database — `UserSpielFavorite` model
+
+Add to `prisma/schema.prisma`:
+
+```prisma
+model UserSpielFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  spielId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  spiel Spiel @relation(fields: [spielId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, spielId])
+  @@map("user_spiel_favorite")
+}
+```
+
+Add back-relations to `User` and `Spiel`:
+- `User.favorites  UserSpielFavorite[]`
+- `Spiel.favoritedBy UserSpielFavorite[]`
+
+Run `prisma migrate dev --name add-favorites`.
+
+### 2. API — Toggle endpoint
+
+**File:** `app/api/spiels/[id]/favorite/route.ts`
+
+- `POST /api/spiels/[id]/favorite` — creates the favorite record (idempotent
+  with upsert); returns `{ favorited: true }`.
+- `DELETE /api/spiels/[id]/favorite` — deletes the record if it exists; returns
+  `{ favorited: false }`.
+- Both routes: verify the user can access the spiel (same companyId +
+  departmentIds check as the main spiel routes).
+- No Zod schema needed — the body is empty; all data comes from the URL param
+  and session.
+
+### 3. Data — Extend `SpielCardData`
+
+Add `isFavorited: boolean` to the `SpielCardData` type in
+`components/spiels/spiel-card.tsx`.
+
+In `app/(dashboard)/spiels/page.tsx`:
+- After fetching spiels, fetch the current user's favorite spielId set in a
+  single extra query:
+  ```ts
+  const favorites = await prisma.userSpielFavorite.findMany({
+    where: { userId: session.user.id, spielId: { in: displaySpiels.map(s => s.id) } },
+    select: { spielId: true },
+  });
+  const favoriteIds = new Set(favorites.map(f => f.spielId));
+  ```
+- Map each spiel: `{ ...spiel, isFavorited: favoriteIds.has(spiel.id) }`.
+- Add a `favorites` URL param: when `?favorites=1` is active, modify the
+  `whereClause` to join on `UserSpielFavorite` via Prisma `some`:
+  ```ts
+  favoritedBy: { some: { userId: session.user.id } }
+  ```
+- When **not** in favorites mode, sort: pull favorited spiels first client-side
+  after the fetch (avoid a complex DB sort — page size is 50, so this is fine).
+
+### 4. UI — Star icon on `SpielCard`
+
+In `components/spiels/spiel-card.tsx`:
+- Accept `isFavorited: boolean` and `onFavoriteToggle?: (spiel) => void` props.
+- Add a `Star` (lucide) button to the hover toolbar, **before** Copy:
+  - Always visible (not opacity-0) when `isFavorited === true`.
+  - Inside the `group-hover:opacity-100` block when `isFavorited === false`.
+  - Filled yellow star when favorited; outline star when not.
+  - Calls `onFavoriteToggle(spiel)` on click.
+
+### 5. UI — Optimistic toggle in `SpielList`
+
+In `components/spiels/spiel-list.tsx`:
+- Add `handleFavoriteToggle(spiel: SpielCardData)`:
+  1. Optimistically flip `isFavorited` in local state.
+  2. Call `POST` or `DELETE` on `/api/spiels/[id]/favorite`.
+  3. On error: roll back the optimistic update + show `goeyToast.error`.
+  4. On success: re-sort the local list (favorites first) so the UI stays
+     consistent without a full page refresh.
+- Pass `onFavoriteToggle={handleFavoriteToggle}` to each `SpielCard`.
+
+### 6. UI — "Favorites" filter chip
+
+In `app/(dashboard)/spiels/page.tsx`, add a "★ Favorites" chip in the top
+filter bar (alongside Departments / Categories):
+
+```tsx
+<Link
+  href={buildFilterHref({ favorites: params.favorites ? undefined : "1" })}
+  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+    params.favorites
+      ? "bg-amber-400 text-amber-900"
+      : "text-muted-foreground hover:bg-accent"
+  }`}
+>
+  ★ Favorites
+</Link>
+```
+
+Update `buildFilterHref` to accept and pass `favorites`.
+
+---
+
+## Files Affected
+
+| File | Change |
+|---|---|
+| `prisma/schema.prisma` | Add `UserSpielFavorite` model + back-relations |
+| `prisma/migrations/…` | Auto-generated by `prisma migrate dev` |
+| `app/api/spiels/[id]/favorite/route.ts` | **Create** — POST + DELETE handlers |
+| `components/spiels/spiel-card.tsx` | Add `isFavorited` prop + star button |
+| `components/spiels/spiel-list.tsx` | Add optimistic favorite toggle logic |
+| `app/(dashboard)/spiels/page.tsx` | Fetch favorites, add filter chip + param |
+
+---
+
+## Acceptance Criteria
+
+- [ ] Clicking the star on a spiel card toggles the favorite state immediately
+      (optimistic update) with no full-page reload.
+- [ ] Favorited cards show a filled yellow star that is always visible (not
+      just on hover).
+- [ ] Refreshing the page preserves the favorite state.
+- [ ] "★ Favorites" filter chip shows only the current user's starred spiels.
+- [ ] Favoriting a spiel in User A's session does not appear as favorited for
+      User B.
+- [ ] Network error on toggle rolls back the UI and shows an error toast.
+- [ ] Deleting a spiel cascades and removes its favorite records (Prisma
+      `onDelete: Cascade`).
+- [ ] All roles (employee, admin, super_admin) can favorite.
+
+---
+
+## Deviations from Original Sketch
+
+The original key considerations mentioned "pinned spiels sort above others in
+library view." The plan achieves this via client-side re-sort after a toggle
+(no DB-level sort change needed given the 50-item page size), which keeps the
+query simple and avoids a complex `orderBy` with a subquery.
