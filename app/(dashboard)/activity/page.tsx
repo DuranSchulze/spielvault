@@ -8,7 +8,7 @@ import { eq, and, desc, count, inArray } from "drizzle-orm";
 import type { UserRole } from "@/types";
 
 export const metadata = {
-  title: "Activity — Spiel Vault",
+  title: "Activity — RepFlow",
 };
 
 const PAGE_SIZE = 50;

@@ -7,7 +7,7 @@ import { spiels, departments, categories } from "@/lib/drizzle/schema";
 import { eq, and, or, ilike, inArray, desc, asc, count } from "drizzle-orm";
 
 export const metadata = {
-  title: "Archive — Spiel Vault",
+  title: "Archive — RepFlow",
 };
 
 type SpielListItem = {

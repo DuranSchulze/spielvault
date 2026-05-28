@@ -10,7 +10,7 @@ type PageParams = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: PageParams }) {
   const { id } = await params;
-  return { title: `Version History — Spiel Vault` };
+  return { title: `Version History — RepFlow` };
 }
 
 type VersionRow = {

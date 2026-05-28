@@ -5,7 +5,7 @@ import { eq, and, gte, count, inArray } from "drizzle-orm";
 import { CopiesChart } from "@/components/analytics/copies-chart";
 
 export const metadata = {
-  title: "Analytics — Spiel Vault",
+  title: "Analytics — RepFlow",
 };
 
 const DAYS = 30;

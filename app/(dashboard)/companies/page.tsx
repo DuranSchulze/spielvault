@@ -9,7 +9,7 @@ import { CompanySettingsForm } from "./company-settings-form";
 import type { UserRole } from "@/types";
 
 export const metadata = {
-  title: "Company Settings — Spiel Vault",
+  title: "Company Settings — RepFlow",
 };
 
 function formatDate(date: Date): string {

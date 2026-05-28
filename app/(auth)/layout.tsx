@@ -38,7 +38,7 @@ export default async function AuthLayout({
             />
           </svg>
           <span className="font-display text-base font-semibold tracking-tight">
-            Spiel Vault
+            RepFlow
           </span>
         </div>
 

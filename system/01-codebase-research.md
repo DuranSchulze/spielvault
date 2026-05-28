@@ -1,14 +1,14 @@
-# Spiel Vault — Codebase Research & Analysis
+# RepFlow — Codebase Research & Analysis
 
 > **Date:** 2026-05-23
 > **Author:** Zed Analysis Agent
-> **Scope:** Full codebase scan of `spielvault/`
+> **Scope:** Full codebase scan of `repflow/`
 
 ---
 
 ## 1. Product Identity
 
-**Spiel Vault** is a centralized, department-based **spiel management platform** for teams. A "spiel" is a reusable block of formatted text used for support responses, sales scripts, internal messaging, outreach, or any repeated written workflow.
+**RepFlow** is a centralized, department-based **spiel management platform** for teams. A "spiel" is a reusable block of formatted text used for support responses, sales scripts, internal messaging, outreach, or any repeated written workflow.
 
 ### Stack
 
@@ -46,7 +46,7 @@ Company
 ## 2. File Map & Architecture
 
 ```
-spielvault/
+repflow/
 ├── app/                          # Next.js App Router pages
 │   ├── (auth)/                   # Auth group (login, signup)
 │   │   ├── layout.tsx            # Brand panel + form panel

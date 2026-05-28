@@ -10,7 +10,7 @@ import type { UserRole } from "@/types";
 type PageParams = Promise<{ id: string }>;
 
 export const metadata = {
-  title: "Edit Spiel — Spiel Vault",
+  title: "Edit Spiel — RepFlow",
 };
 
 export default async function EditSpielPage({

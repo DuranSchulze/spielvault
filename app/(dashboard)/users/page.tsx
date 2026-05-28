@@ -9,7 +9,7 @@ import type { UserRole } from "@/types";
 import type { UserItem } from "@/components/users/users-manager";
 
 export const metadata = {
-  title: "Users — Spiel Vault",
+  title: "Users — RepFlow",
 };
 
 export default async function UsersPage() {

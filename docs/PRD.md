@@ -1,14 +1,14 @@
 # PRD.md
 
-## Spiel Vault
+## RepFlow
 
 ## 1. Product Overview
 
-Spiel Vault is a web-based spiel management system built for teams that need a fast and organized way to store, manage, search, copy, and later insert reusable spiels.
+RepFlow is a web-based spiel management system built for teams that need a fast and organized way to store, manage, search, copy, and later insert reusable spiels.
 
 A spiel is a reusable block of formatted text used for communication, responses, support, sales, internal messaging, outreach, or any repeated written workflow.
 
-Spiel Vault will serve as:
+RepFlow will serve as:
 
 - a centralized repository of spiels
 - a department-based access system for teams
@@ -29,7 +29,7 @@ Create a simple and reliable platform where teams can:
 - reuse them quickly with formatting preserved
 - prepare for direct insertion through a future browser extension
 
-Spiel Vault should reduce repetitive typing, improve consistency in team communication, and make approved messaging easier to access and use.
+RepFlow should reduce repetitive typing, improve consistency in team communication, and make approved messaging easier to access and use.
 
 ---
 
@@ -47,7 +47,7 @@ Without a dedicated spiel system, common problems happen:
 - limited formatting support when storing reusable responses
 - no easy way to reuse formatted content across tools like Gmail or web forms
 
-Spiel Vault solves this by providing a structured and searchable repository of reusable formatted spiels.
+RepFlow solves this by providing a structured and searchable repository of reusable formatted spiels.
 
 ---
 
@@ -155,7 +155,7 @@ Can:
 
 ## 8. Core Product Scope
 
-Spiel Vault v1 includes:
+RepFlow v1 includes:
 
 - email and password signup
 - login and logout
@@ -171,7 +171,7 @@ Spiel Vault v1 includes:
 - spiel copy action
 - protected access based on department membership
 
-Spiel Vault v1 does not include:
+RepFlow v1 does not include:
 
 - Google login
 - Gmail authentication
@@ -609,7 +609,7 @@ The product is acceptable for v1 if:
 
 ## 20. Final PRD Summary
 
-Spiel Vault is a structured spiel repository for teams.
+RepFlow is a structured spiel repository for teams.
 
 It solves the problem of repeated manual messaging by providing:
 

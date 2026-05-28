@@ -1,10 +1,10 @@
 # TECHNICAL.md
 
-## Spiel Vault
+## RepFlow
 
 ## 1. Technical Overview
 
-Spiel Vault is a **web application + browser extension-ready system** built with a **fixed core stack**:
+RepFlow is a **web application + browser extension-ready system** built with a **fixed core stack**:
 
 - **Next.js**
 - **Prisma**
@@ -360,7 +360,7 @@ Used for:
 - search
 - textarea insertion fallback
 
-This is the recommended storage strategy for Spiel Vault.
+This is the recommended storage strategy for RepFlow.
 
 ---
 

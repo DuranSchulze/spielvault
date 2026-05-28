@@ -4,7 +4,7 @@ import { canManageDepartment } from "@/lib/permissions";
 import type { UserRole } from "@/types";
 import { ImportForm } from "./import-form";
 
-export const metadata = { title: "Import Spiels — Spiel Vault" };
+export const metadata = { title: "Import Spiels — RepFlow" };
 
 export default async function ImportPage() {
   const access = await requireAccessContext();

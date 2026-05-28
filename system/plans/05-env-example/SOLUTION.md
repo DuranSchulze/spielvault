@@ -18,7 +18,7 @@ None. Followed the spec exactly.
 
 | File | Change |
 |---|---|
-| `spielvault/.env.example` | **Created** |
+| `repflow/.env.example` | **Created** |
 
 ## Acceptance Criteria
 

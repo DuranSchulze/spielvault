@@ -10,7 +10,7 @@
 
 A Chrome extension (Manifest V3) that lets users search, copy, and insert
 spiels directly from any browser tab. Auth uses a personal API token generated
-on the SpielVault profile page — no cookie sharing or CORS credential issues.
+on the RepFlow profile page — no cookie sharing or CORS credential issues.
 
 ---
 
@@ -38,7 +38,7 @@ installation. **Bearer token auth avoids all of this**:
 ## Requirements
 
 1. User generates a token on their Profile page ("Browser Extension" section).
-2. User pastes the token + SpielVault URL into the extension Options page.
+2. User pastes the token + RepFlow URL into the extension Options page.
 3. Extension popup: search bar, department filter, spiel list with Copy and
    Insert buttons per row.
 4. Copy: writes `contentPlain` to clipboard.

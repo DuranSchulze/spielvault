@@ -1,4 +1,4 @@
-# SpielVault Browser Extension
+# RepFlow Browser Extension
 
 A Chrome extension (Manifest V3) that lets you search, copy, and insert spiels directly from any browser tab.
 
@@ -6,7 +6,7 @@ A Chrome extension (Manifest V3) that lets you search, copy, and insert spiels d
 
 ### 1. Generate an API Token
 
-1. Sign in to your SpielVault workspace.
+1. Sign in to your RepFlow workspace.
 2. Navigate to **My Account** (avatar menu → Account).
 3. Under **Browser Extension**, click **Generate Token**.
 4. Copy the token — it is shown only once.
@@ -20,15 +20,15 @@ A Chrome extension (Manifest V3) that lets you search, copy, and insert spiels d
 
 ### 3. Configure the Extension
 
-1. Click the SpielVault icon in your toolbar (or find it in the Extensions puzzle menu).
+1. Click the RepFlow icon in your toolbar (or find it in the Extensions puzzle menu).
 2. Click **⚙** (settings) or right-click the icon → **Options**.
-3. Enter your **SpielVault URL** (e.g. `https://your-domain.com`).
+3. Enter your **RepFlow URL** (e.g. `https://your-domain.com`).
 4. Paste your **API Token**.
 5. Click **Save Settings**.
 
 ## Using the Popup
 
-- Click the SpielVault toolbar icon to open the popup.
+- Click the RepFlow toolbar icon to open the popup.
 - Type in the search box to filter spiels by title or content.
 - **Copy** — copies the plain-text version to your clipboard.
 - **Insert** — injects the spiel into the focused field on the active page:

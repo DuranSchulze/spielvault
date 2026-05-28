@@ -1,4 +1,4 @@
-# Spiel Vault — Issues & Enhancement Opportunities
+# RepFlow — Issues & Enhancement Opportunities
 
 > **Date:** 2026-05-23
 > **Companion to:** `01-codebase-research.md`

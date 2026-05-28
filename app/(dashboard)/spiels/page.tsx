@@ -8,7 +8,7 @@ import { eq, and, or, ilike, inArray, desc, asc, count, SQL } from "drizzle-orm"
 import type { UserRole } from "@/types";
 
 export const metadata = {
-  title: "Library — Spiel Vault",
+  title: "Library — RepFlow",
 };
 
 type SpielListItem = {

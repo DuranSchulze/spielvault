@@ -1,13 +1,13 @@
 # PLAN.md
-# Spiel Vault — Product Plan
+# RepFlow — Product Plan
 
 ## 1. Product Name
-**Spiel Vault**
+**RepFlow**
 
 ## 2. Executive Summary
-Spiel Vault is a lightweight internal product for storing, organizing, and reusing company-approved spiels through a web app and a browser extension.
+RepFlow is a lightweight internal product for storing, organizing, and reusing company-approved spiels through a web app and a browser extension.
 
-The product solves a simple but costly workflow problem: employees repeatedly rewrite the same responses, use outdated messaging, or waste time searching across notes, chats, and documents. Spiel Vault becomes the single source of truth for reusable communication content.
+The product solves a simple but costly workflow problem: employees repeatedly rewrite the same responses, use outdated messaging, or waste time searching across notes, chats, and documents. RepFlow becomes the single source of truth for reusable communication content.
 
 The system should feel fast, simple, and operationally useful from day one.
 
@@ -37,7 +37,7 @@ Teams usually have these issues:
 - formatting breaks when pasted into target systems
 - useful spiels remain stuck in personal notes or chats
 
-Spiel Vault should remove these friction points.
+RepFlow should remove these friction points.
 
 ---
 

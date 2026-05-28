@@ -18,7 +18,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Spiel Vault",
+  title: "RepFlow",
   description: "Centralized spiel management for teams",
 };
 

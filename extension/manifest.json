@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "SpielVault",
+  "name": "RepFlow",
   "version": "1.0.0",
   "description": "Search, copy, and insert spiels from any browser tab.",
   "permissions": ["storage", "activeTab", "scripting", "clipboardWrite"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "SpielVault"
+    "default_title": "RepFlow"
   },
   "options_page": "options.html",
   "background": {

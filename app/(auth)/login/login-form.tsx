@@ -84,7 +84,7 @@ export function LoginForm() {
     }
 
     goeyToast.success("Signed in", {
-      description: "Welcome back to Spiel Vault.",
+      description: "Welcome back to RepFlow.",
     });
     router.push("/dashboard");
     router.refresh();
@@ -215,12 +215,12 @@ export function LoginForm() {
           disabled={isSubmitting}
           className="w-full py-2.5 px-4 rounded-md text-primary-foreground font-semibold text-sm bg-primary hover:bg-primary/90 transition-colors mt-2 disabled:opacity-40"
         >
-          {isSubmitting ? "Signing In..." : "Sign in to Vault"}
+          {isSubmitting ? "Signing In..." : "Sign In"}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        New to Spiel Vault?{" "}
+        New to RepFlow?{" "}
         <Link
           href="/signup"
           className="text-primary font-semibold hover:underline"

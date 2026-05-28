@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata = {
-  title: "Spiel — Spiel Vault",
+  title: "Spiel — RepFlow",
 };
 
 export default async function SpielDetailPage({

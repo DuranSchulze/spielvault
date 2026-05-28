@@ -8,7 +8,7 @@ import { eq, asc } from "drizzle-orm";
 import type { UserRole } from "@/types";
 
 export const metadata = {
-  title: "Categories — Spiel Vault",
+  title: "Categories — RepFlow",
 };
 
 export default async function CategoriesPage() {

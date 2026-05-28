@@ -7,7 +7,7 @@ import { companies, apiTokens } from "@/lib/drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 export const metadata = {
-  title: "Profile — Spiel Vault",
+  title: "Profile — RepFlow",
 };
 
 export default async function ProfilePage() {

@@ -15,7 +15,7 @@ The README instructs developers to "Copy `.env.example .env`" but no `.env.examp
 
 ## Requirements
 
-- [ ] Located at `spielvault/.env.example`
+- [ ] Located at `repflow/.env.example`
 - [ ] Documents every variable used in the codebase
 - [ ] Includes placeholder values and descriptions
 - [ ] Marks required vs optional variables
@@ -26,7 +26,7 @@ The README instructs developers to "Copy `.env.example .env`" but no `.env.examp
 # ─── Database ──────────────────────────────────────────────────────────────
 # PostgreSQL connection string
 # Required for Prisma to connect
-DATABASE_URL=postgresql://user:password@localhost:5432/spielvault
+DATABASE_URL=postgresql://user:password@localhost:5432/repflow
 
 # ─── Authentication (Better Auth) ───────────────────────────────────────────
 # Secret used to encrypt session tokens. Generate with: openssl rand -hex 32
@@ -53,7 +53,7 @@ SEED_ADMIN_PASSWORD=your-secure-admin-password
 
 | File | Change |
 |---|---|
-| `spielvault/.env.example` | **Create** — New file |
+| `repflow/.env.example` | **Create** — New file |
 
 ## Dependencies
 

@@ -8,7 +8,7 @@ import type { UserRole } from "@/types";
 import { DepartmentsManager } from "./departments-manager";
 
 export const metadata = {
-  title: "Departments — Spiel Vault",
+  title: "Departments — RepFlow",
 };
 
 type DepartmentListItem = {

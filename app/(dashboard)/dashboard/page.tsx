@@ -6,7 +6,7 @@ import { eq, and, inArray, desc, count } from "drizzle-orm";
 import { RecentSpielRow } from "@/components/dashboard/recent-spiel-row";
 
 export const metadata = {
-  title: "Dashboard — Spiel Vault",
+  title: "Dashboard — RepFlow",
 };
 
 type RecentSpiel = {

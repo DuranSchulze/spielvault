@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/drizzle/db";
-import { userDepartments } from "@/lib/drizzle/schema";
+import { users, userDepartments } from "@/lib/drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export async function getServerSession() {
@@ -23,10 +23,20 @@ export async function requireServerSession() {
 
 export async function requireAccessContext() {
   const session = await requireServerSession();
-  const companyId = session.user.companyId;
+
+  // Session cookie may be stale after onboarding — fall back to a fresh DB lookup
+  let companyId = session.user.companyId;
+  if (!companyId) {
+    const [fresh] = await db
+      .select({ companyId: users.companyId })
+      .from(users)
+      .where(eq(users.id, session.user.id))
+      .limit(1);
+    companyId = fresh?.companyId ?? null;
+  }
 
   if (!companyId) {
-    redirect("/login");
+    redirect("/onboarding");
   }
 
   const memberships = await db

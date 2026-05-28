@@ -78,7 +78,7 @@ export function ExtensionTokens({ initialTokens }: Props) {
             Browser Extension
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Generate a personal API token to authenticate the SpielVault Chrome
+            Generate a personal API token to authenticate the RepFlow Chrome
             extension. The token is shown only once — store it safely.
           </p>
         </div>

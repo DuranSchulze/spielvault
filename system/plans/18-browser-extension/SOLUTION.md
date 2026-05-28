@@ -7,7 +7,7 @@
 
 ## What Was Implemented
 
-A Chrome Manifest V3 browser extension that connects to SpielVault via a
+A Chrome Manifest V3 browser extension that connects to RepFlow via a
 personal Bearer API token. Users generate a token on their Profile page, paste
 it into the extension Options page, and can then search, copy, and insert
 spiels from any browser tab without switching to the web app.
